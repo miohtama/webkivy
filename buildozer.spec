@@ -33,7 +33,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, lxml, requests, cssselect, pyjnius, futures, six, docutils
+requirements = kivy, lxml, requests, cssselect, pyjnius, futures, six, docutils, pyopenssl
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
