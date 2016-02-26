@@ -49,7 +49,7 @@ requirements = kivy, lxml, requests, cssselect, pyjnius, futures, six
 icon.filename = %(source.dir)s/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
-orientation = landscape
+orientation = all
 
 #
 # OSX Specific

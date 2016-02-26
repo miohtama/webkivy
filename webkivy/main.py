@@ -21,7 +21,7 @@ SETTINGS_FILE = "webkivy-settings.json"
 
 if kivy.utils.platform == "android":
     from jnius import autoclass
-    SETTINGS_FOLDER = autoclass('org.kivy.android.PythonActivity').mActivity.getFilesDir().getAbsolutePath()
+    SETTINGS_FOLDER = autoclass('org.renpy.android.PythonActivity').mActivity.getFilesDir().getAbsolutePath()
 else:
     SETTINGS_FOLDER = "."
 
