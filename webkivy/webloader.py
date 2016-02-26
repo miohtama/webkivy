@@ -5,18 +5,16 @@ import os
 import tempfile
 import shutil
 import sys
-from threading import Thread
 from urllib.parse import urlparse, urljoin
-from typing import Tuple
 
+import atexit
 import lxml.html
 import lxml.cssselect
 import requests
-from joblib import Parallel, delayed
 
 
 #: Crawl all files with this extension from target
-LOADABLE_SUFFIXES = [".py", ".kv"]
+LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3"]
 
 
 def get_url_fname(url):
@@ -47,6 +45,7 @@ def path_to_mod_name(mod_full_path):
 def is_likely_app_part(link):
     fname = get_url_fname(link)
     _, ext = os.path.splitext(fname)
+    ext = ext.lower()
     return ext in LOADABLE_SUFFIXES
 
 
@@ -145,17 +144,14 @@ def load_and_run(url):
     path = parts.path
     fragment = parts.fragment
 
-    if fragment:
-        if ":" not in fragment:
-            raise UnsupportedURL("Fragment in URL {} was not format module_name:function_name".format(url))
+    if not fragment:
+        raise UnsupportedURL("URL must contain fragment telling entry point function: {}".format(url))
 
+    if ":" in fragment:
         mod_name, func_name = fragment.split(":")
     else:
-        if not path.endswith(".py"):
-            raise UnsupportedURL("URL {} must contain module_name:function_name fragment or be direct .py link".format(url))
-
         mod_name = None
-        func_name = "main"
+        func_name = fragment
 
     loader = Loader()
     main_fname = loader.load(url)
@@ -165,5 +161,6 @@ def load_and_run(url):
     try:
         return loader.run(mod_name, func_name)
     finally:
-        loader.close()
+        # Don't leave tmp directory right away as it may contain resource files (graphics, audio) still needed to load
+        atexit.register(loader.close)
 

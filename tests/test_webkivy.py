@@ -10,7 +10,7 @@ from webkivy.webloader import path_to_mod_name
 def test_load_simple_module():
     # Simple module test - run function from web and see it matches expected value
     loader = Loader()
-    main_fname = loader.load("https://gist.githubusercontent.com/miohtama/80391980c2e73b285cfe/raw/dd89a55497ba33a6014453d9bb7432ab424c01cf/kivyhello.py")
+    main_fname = loader.load("https://gist.githubusercontent.com/miohtama/80391980c2e73b285cfe/raw/dd89a55497ba33a6014453d9bb7432ab424c01cf/kivyhello.py#main")
     mod = path_to_mod_name(main_fname)
     result = loader.run(mod, "hello")
     assert result == "Hello there"
