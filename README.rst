@@ -4,7 +4,7 @@ Webkivy: Remote live edit of Python applications on Android
 
 Webkivy applications allows execution of Python scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning about Python development.
 
-When you edit your source code you do not need to deploy new files on your phone - it's enough to hit *Run* button again. This web like development model makes the prototyping life cycle fast. Furthermore no any development tools need to be installed lowering the barrier of entry for mobile application development.
+Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes the prototyping life cycle fast. Furthermore no any development tools need to be installed lowering the barrier of entry for mobile application development.
 
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework.
 
@@ -13,11 +13,16 @@ Supported platforms
 
 * Android (download)
 
-* iOS (due to App Store restrictions you need to obtain an IOS developer license and build the application for your own phone)
+* iOS (eventually)
 
-* Windows (untested)
+Features
+========
 
-* OSX (untested)
+* "Just a bunch of files" deployment model - use any hosting service or local wi-fi to serve your application without complexity
+
+* Live reload of code
+
+* Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`: sensors, OpenGL, sound, others.
 
 Usage
 =====
@@ -61,8 +66,10 @@ Running Python application from your local computer
 
 * Hit *Run*
 
-Developing
-==========
+Developing Webkivy
+==================
+
+Please note that the project is not a proper distributed Python package, but a Kivy application.
 
 Setup package in development mode::
 
@@ -79,7 +86,9 @@ Run tests::
 
     kivy -m pytest
 
-Please note that the project is not a proper distributed Python package, but a Kivy application.
+Deploying on a local Android phone using Buildozer (VM)::
+
+    buildozer android debug deploy run
 
 Packaging this for Android::
 

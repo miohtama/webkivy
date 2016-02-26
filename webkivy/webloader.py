@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 """Load remote Python classes from an URL and run them for Kivy on Android."""
 import concurrent.futures
+import imp
 import importlib
 import os
 import tempfile
 import shutil
 import sys
-from urllib.parse import urlparse, urljoin
+from six.moves.urllib.parse import urlparse, urljoin
 
 import atexit
 import lxml.html
@@ -14,7 +16,7 @@ import requests
 
 
 #: Crawl all files with this extension from target
-LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3"]
+LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3", ".png", ".jpg"]
 
 
 def get_url_fname(url):
@@ -53,7 +55,7 @@ class UnsupportedURL(Exception):
     """We did not figure out how to run this URL."""
 
 
-class Loader:
+class Loader(object):
     """Helper class to load and run Python modules directly from web."""
 
     def __init__(self):
@@ -96,7 +98,7 @@ class Loader:
         download_file(url, dest)
         return dest
 
-    def load(self, url) -> str:
+    def load(self, url):
         """Load script from URL."""
 
         fname = get_url_fname(url)
@@ -107,7 +109,7 @@ class Loader:
         else:
             self.crawl(url)
 
-    def run(self, mod_name: str, func_name: str) -> object:
+    def run(self, mod_name, func_name):
 
         if not self.temp_path in sys.path:
             sys.path.insert(0, self.temp_path)
@@ -115,7 +117,10 @@ class Loader:
         # This might be subsequent run within the same tampered process,
         # tell interpreter we have messed up with this module
         mod = importlib.import_module("webkivyapp")
-        importlib.reload(mod)
+        imp.reload(mod)
+
+        # py3
+        # importlib.reload(mod)
 
         # Use a special package name where downloaded modules are placed
         mod = importlib.import_module("webkivyapp." + mod_name)

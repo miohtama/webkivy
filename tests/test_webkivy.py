@@ -20,7 +20,7 @@ def test_load_simple_module():
 def test_load_crawl():
     # Simple module test - run function from web and see it matches expected value
 
-    cmdline = ["kivy", "-m", "http.server", "8866"]
+    cmdline = ["kivy", "-m", "SimpleHTTPServer", "8866"]
 
     web_server = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.path.join(os.getcwd(), "tests", "test_data"))
     try:
@@ -36,4 +36,5 @@ def test_load_crawl():
         result = load_and_run("http://localhost:8866#hello1:hello")
         assert result == "Hello there"
     finally:
-        web_server.terminate()
+        if web_server.returncode is None:
+            web_server.terminate()

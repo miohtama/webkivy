@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 import kivy
-from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.textinput import TextInput
@@ -78,6 +78,10 @@ class RemoteRunnerApp(App):
         super().run()
 
     def read_settings(self):
+        """Read settings from .json file."""
+
+        # TODO: Replace with Kivy's internal settings management?
+
         settings = None
         if os.path.exists(SETTINGS_FILE):
             try:
