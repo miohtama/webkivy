@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Load remote Python classes from an URL and run them for Kivy on Android."""
+
+from __future__ import print_function
+
 import concurrent.futures
 import imp
 import importlib
@@ -113,6 +116,8 @@ class Loader(object):
 
         if not self.temp_path in sys.path:
             sys.path.insert(0, self.temp_path)
+
+        print(os.listdir(self.path))
 
         # This might be subsequent run within the same tampered process,
         # tell interpreter we have messed up with this module
