@@ -87,7 +87,7 @@ class RemoteRunnerApp(App):
                 pass
 
         if not settings:
-            settings = {"url": "https://gist.github.com"}
+            settings = {"url": "https://bit.ly/webkivy"}
 
         self.settings = settings
 
