@@ -69,7 +69,7 @@ fullscreen = 0
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION, ACCESS_NETWORK_STATE, BATTERY_STATS, BIND_NFC_SERVICE, NFC, BLUETOOTH, BODY_SENSORS, VIBRATE,
 
 # (int) Android API to use
-android.api = 21
+# android.api = 21
 
 # (int) Minimum API required
 #android.minapi = 9
