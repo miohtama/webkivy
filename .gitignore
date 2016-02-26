@@ -23,3 +23,6 @@ __pycache__
 
 # Our settings
 webkivy-settings.json
+
+# Hand-built pyjinius for OSX
+pyjnius

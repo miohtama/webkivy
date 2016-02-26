@@ -41,7 +41,7 @@ An example URL of running a Python application off from *gist.github.com*::
 
 An example URL of running a Python application from static web hosting with *index.html* support::
 
-    https://bit.ly/webkivy#simplekivy:run
+    http://bit.ly/webkivytest#simplekivy:run
 
 The entry point function return `a Kivy screen object <https://kivy.org/docs/api-kivy.uix.screenmanager.html#kivy.uix.screenmanager.Screen>`_. Usually entry point is a module level function ``run()``. After entry point is called the Android application switches over to screen by given the entry point.
 
@@ -86,10 +86,49 @@ Run tests::
 
     kivy -m pytest
 
+Deploying on Android
+====================
+
+To build APK you need to use Buildozer virtual machine image (Linux).
+
+`Make sure your phone is in developer mode <http://wccftech.com/enable-developer-options-in-android-6-marshmallow/>`_. Connect your phone. Expose your phone to the VM by clicking the USB icon in the lower right corner of Virtualbox.
+
+Build debug APK::
+
+    buildozer android debug
+
+Make sure VM sees your connected Android phone::
+
+    ﻿/home/kivy/.buildozer/android/platform/android-sdk-20/platform-tools/adb devices
+
 Deploying on a local Android phone using Buildozer (VM)::
 
     buildozer android debug deploy run
 
+For the first deployment it will ask permission on phone screen. Accept it and rerun the command.
+
 Packaging this for Android::
 
     pass
+
+Other
+=====
+
+Install jnius on OSX
+--------------------
+
+You get functioning import and autocompletion in your editor.
+
+Example::
+
+    git clone git@github.com:kivy/pyjnius.git
+    find /Applications|grep -i "jni.h"
+    # Oracly y u so fun
+    ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/jni.h .
+    /Applications/Kivy2.app/Contents/Resources/
+
+
+    /Applications/Kivy2.app/Contents/Resources/venv/bin/python setup.py develop
+
+`JNI headers installation on OSX <http://stackoverflow.com/questions/27498857/error-installing-pyjnius-jni-h-not-found-os-x-10-10-1>`_.
+

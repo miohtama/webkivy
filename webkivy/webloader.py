@@ -18,8 +18,8 @@ import lxml.cssselect
 import requests
 
 
-#: Crawl all files with this extension from target
-LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3", ".png", ".jpg"]
+#: Fetch all files with this extension from crawl target
+LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3", ".png", ".jpg", ".gif"]
 
 
 def get_url_fname(url):
@@ -42,7 +42,7 @@ def download_file(url, local_filename):
 
 def path_to_mod_name(mod_full_path):
     dir = os.path.dirname(mod_full_path)
-    fname = os.path.basename(mod_full_path)
+    fname = os.path.basename(dir)
     base, ext = os.path.splitext(fname)
     return base
 
@@ -117,8 +117,6 @@ class Loader(object):
         if not self.temp_path in sys.path:
             sys.path.insert(0, self.temp_path)
 
-        print(os.listdir(self.path))
-
         # This might be subsequent run within the same tampered process,
         # tell interpreter we have messed up with this module
         mod = importlib.import_module("webkivyapp")
@@ -151,7 +149,6 @@ def load_and_run(url):
     """
 
     parts = urlparse(url, allow_fragments=True)
-    path = parts.path
     fragment = parts.fragment
 
     if not fragment:
