@@ -107,6 +107,10 @@ Deploying on a local Android phone using Buildozer (VM)::
 
 For the first deployment it will ask permission on phone screen. Accept it and rerun the command.
 
+If it crashes you can view adb logs::
+
+    ﻿/home/kivy/.buildozer/android/platform/android-sdk-20/platform-tools/adb logcat
+
 Packaging this for Android::
 
     pass
