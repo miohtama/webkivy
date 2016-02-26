@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 import kivy
-from kivy.uix.popup import Popup
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.textinput import TextInput
-from webkivy.webloader import load_and_run
 
 kivy.require('1.9.1')
 
 import os
 import json
 import webbrowser
+import traceback
 
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.textinput import TextInput
+from kivy.logger import Logger
 import kivy.utils
 from kivy.app import App
 from kivy.lang import Builder
+
+from webkivy.webloader import load_and_run
 
 
 SETTINGS_FILE = "webkivy-settings.json"
@@ -30,7 +33,11 @@ HELP = """
 Python remote script runner
 ---------------------------
 
-Run a .py script or multiple modules from a given URL
+This is a Python programming and prototyping tool.
+
+Quickly deploy your Android mobile application Python scripts over HTTP connection and any URL.
+
+Copyright 2016 Mikko Ohtamaa. MIT licensed.
 """
 
 # We first define our GUI
@@ -44,9 +51,6 @@ kv = '''
             id: stack
             orientation: 'vertical'
             spacing: 20
-            RstDocument:
-                id: help
-                text: ''
             TextInput:
                 id: url
                 size_hint_y: None
@@ -60,6 +64,13 @@ kv = '''
                 text: 'Help'
                 size_hint_y: None
                 on_release: app.show_help()
+            Button:
+                text: 'About the author'
+                size_hint_y: None
+                on_release: app.show_author()
+            RstDocument:
+                id: help
+                text: ''
 '''
 
 # Prepare kv for classes
@@ -91,7 +102,7 @@ class RemoteRunnerApp(App):
                 pass
 
         if not settings:
-            settings = {"url": "http://bit.ly/webkivytest"}
+            settings = {"url": "http://bit.ly/webkivytest#simplekivy:run"}
 
         self.settings = settings
 
@@ -107,13 +118,19 @@ class RemoteRunnerApp(App):
             self.root.switch_to(result)
 
         except Exception as e:
+            tb = traceback.format_exc()
+            Logger.exception(str(e))
+            Logger.exception(tb)
             popup = Popup(title='Python exception occured',
-                content=TextInput(text=str(e) + "\n\nSee adb logs for details"),
+                content=TextInput(text=str(e) + "\n\nSee adb logs for details\n\n" + tb),
                 size_hint=(.8, .8))
             popup.open()
 
     def show_help(self):
         webbrowser.open("https://github.com/miohtama/android-remote-python")
+
+    def show_author(self):
+        webbrowser.open("https://opensourcehacker.com")
 
     def write_settings(self):
         root = self.root.get_screen("landing")
@@ -127,7 +144,7 @@ class RemoteRunnerApp(App):
         root.ids.help.text = HELP
         root.ids.help.colors.update({
             'background': '000000',
-            'paragraph': 'ffffff',
+            'paragraph': 'eeeeee',
             'title': 'aaaaff',
             'bullet': '000000ff'})
         return root

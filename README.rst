@@ -8,6 +8,8 @@ Live edit of source code is supported. You do not need to copy new application f
 
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework.
 
+.. contents:: :local:
+
 Supported platforms
 ===================
 
@@ -18,7 +20,7 @@ Supported platforms
 Features
 ========
 
-* "Just a bunch of files" deployment model - use any hosting service or local wi-fi to serve your application without complexity
+* "Just bunch of files" (JBOF) deployment model - use any hosting service or local wi-fi to serve your application without complexity
 
 * Live reload of code
 
@@ -86,6 +88,35 @@ Run tests::
 
     kivy -m pytest
 
+Namespacing
+===========
+
+Your application may contain several modules. You should be able to import them using Python relative import::
+
+    import .anothermodule
+
+    from .anothermodule import foobar
+
+
+In the case you need to use absolute imports modules are placed in ``webkivy.dynamic`` namespace.
+
+Viewing logs
+============
+
+Android logs to a subsystem which is often referred as "adb logs".
+
+The easiest way to view these logs is to
+
+* `Set your phone to developer mode <http://wccftech.com/enable-developer-options-in-android-6-marshmallow>`_
+
+* `Install Android SDK <http://developer.android.com/sdk/index.html>`_
+
+* Connect USB cable to your computer
+
+* Use `adb logcat command <http://developer.android.com/tools/help/logcat.html>`_
+
+Below is also a command line recipe if you are using a `Kivy Buildozer virtual machine <https://kivy.org/docs/guide/packaging-android-vm.html>`_.
+
 Deploying on Android
 ====================
 
@@ -107,7 +138,7 @@ Deploying on a local Android phone using Buildozer (VM)::
 
 For the first deployment it will ask permission on phone screen. Accept it and rerun the command.
 
-If it crashes you can view adb logs::
+When your application crashes you can view adb logs::
 
     ﻿/home/kivy/.buildozer/android/platform/android-sdk-20/platform-tools/adb logcat
 

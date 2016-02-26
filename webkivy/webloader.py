@@ -84,9 +84,13 @@ class Loader(object):
         """
 
         resp = requests.get(url)
+
+        # See through redirects
+        final_base_url = resp.url
+
         tree = lxml.html.fromstring(resp.content)
         elems = tree.cssselect("a")
-        links = [urljoin(url, elem.attrib.get("href", "")) for elem in elems]
+        links = [urljoin(final_base_url, elem.attrib.get("href", "")) for elem in elems]
         links = [link for link in links if is_likely_app_part(link)]
 
         # Load all links paraller
@@ -95,10 +99,18 @@ class Loader(object):
             for future in concurrent.futures.as_completed(future_to_url):
                 future.result()  # Raise exception in main thread if bad stuff happened
 
-    def fetch_file(self, url):
+    def fetch_file(self, url, should_not_be_html=True):
+        """Fetch a Python module or data file"""
         fname = get_url_fname(url)
         dest = os.path.join(self.path, fname)
         download_file(url, dest)
+
+        f = open(dest, "rt")
+        payload = f.read(512).lower()
+        if "<!doctype html" in payload or "<html" in payload:
+            # Likely an error page
+            raise UnsupportedURL("Got a likely error page for URL {}: {}".format(url, payload))
+
         return dest
 
     def load(self, url):
