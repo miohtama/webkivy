@@ -38,3 +38,7 @@ Run tests::
     kivy -m pytest
 
 Please note that the project is not a proper distributed Python package, but a Kivy application.
+
+Packaging this for Android::
+
+    pass

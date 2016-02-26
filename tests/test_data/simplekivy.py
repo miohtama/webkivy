@@ -5,8 +5,6 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivy.core.audio import SoundLoader
 
-from webkivy.main import LandingScreen
-
 Builder.load_string("""
 <HelloWorldScreen>:
     BoxLayout:
