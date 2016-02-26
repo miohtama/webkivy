@@ -75,7 +75,7 @@ class RemoteRunnerApp(App):
 
     def run(self):
         self.read_settings()
-        super().run()
+        super(RemoteRunnerApp, self).run()
 
     def read_settings(self):
         """Read settings from .json file."""
