@@ -1,0 +1,25 @@
+# Never commit our secrets files
+*secrets.ini
+
+# Default .gitignore with common Pythonic web ignores
+venv
+build/
+dist/
+*.pyc
+__pycache__
+*.egg
+*.egg-info
+
+# Logs
+*.log
+
+# Database dumbs
+*.sql
+*.sqlite
+
+
+# pytest-splinter generated screenshots of test failures
+.cache
+
+# Our settings
+webkivy-settings.json
