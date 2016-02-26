@@ -1,10 +1,12 @@
 """Load remote Python classes from an URL and run them for Kivy on Android."""
+import concurrent.futures
 import importlib
 import os
 import tempfile
 import shutil
 import sys
-from urllib.parse import urlparse
+from threading import Thread
+from urllib.parse import urlparse, urljoin
 from typing import Tuple
 
 import lxml.html
@@ -26,7 +28,7 @@ def get_url_fname(url):
 
 # http://stackoverflow.com/a/16696317/315168
 def download_file(url, local_filename):
-    r = requests.get(url, stream=True)
+    r = requests.get(url, stream=True, timeout=60.0)
     with open(local_filename, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
             if chunk: # filter out keep-alive new chunks
@@ -42,6 +44,12 @@ def path_to_mod_name(mod_full_path):
     return base
 
 
+def is_likely_app_part(link):
+    fname = get_url_fname(link)
+    _, ext = os.path.splitext(fname)
+    return ext in LOADABLE_SUFFIXES
+
+
 class UnsupportedURL(Exception):
     """We did not figure out how to run this URL."""
 
@@ -50,30 +58,40 @@ class Loader:
     """Helper class to load and run Python modules directly from web."""
 
     def __init__(self):
-        self.path = tempfile.mkdtemp()
+
+        # This is where our Python package is based
+        self.temp_path = tempfile.mkdtemp()
+
+        # Create a special package where downloaded files are placed. This is to make relative imports to work.
+        self.path = os.path.join(self.temp_path, "webkivyapp")
+        os.makedirs(self.path)
+        open(os.path.join(self.path, "__init__.py"), 'a').close()
 
     def close(self):
-        shutil.rmtree(self.path)
+        shutil.rmtree(self.temp_path)
+
+        if self.temp_path in sys.path:
+            sys.path.remove(self.temp_path)
 
     def crawl(self, url):
         """Crawl .html page and extract all URls we think are part of application from there.
 
-        Parallerize downloads using joblib.
+        Parallerize downloads using threads.
         """
-
-        def fetch_link(l):
-            target = l["href"]
-            fname = get_url_fname(url)
-            _, ext = os.path.splitext(fname)
-            if ext in LOADABLE_SUFFIXES:
-                self.fetch_file(target)
 
         resp = requests.get(url)
         tree = lxml.html.fromstring(resp.content)
-        links = tree.cssselect("a[href]")
-        Parallel(n_jobs=4, backend="threading")(delayed(fetch_link)(l) for l in links)
+        elems = tree.cssselect("a")
+        links = [urljoin(url, elem.attrib.get("href", "")) for elem in elems]
+        links = [link for link in links if is_likely_app_part(link)]
 
-    def fetch_file(self, url) -> Tuple[str]:
+        # Load all links paraller
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            future_to_url = {executor.submit(self.fetch_file, link): link for link in links}
+            for future in concurrent.futures.as_completed(future_to_url):
+                future.result()  # Raise exception in main thread if bad stuff happened
+
+    def fetch_file(self, url):
         fname = get_url_fname(url)
         dest = os.path.join(self.path, fname)
         download_file(url, dest)
@@ -91,10 +109,17 @@ class Loader:
             self.crawl(url)
 
     def run(self, mod_name: str, func_name: str) -> object:
-        if not dir in sys.path:
-            sys.path.insert(0, dir)
 
-        mod = importlib.import_module(mod_name)
+        if not self.temp_path in sys.path:
+            sys.path.insert(0, self.temp_path)
+
+        # This might be subsequent run within the same tampered process,
+        # tell interpreter we have messed up with this module
+        mod = importlib.import_module("webkivyapp")
+        importlib.reload(mod)
+
+        # Use a special package name where downloaded modules are placed
+        mod = importlib.import_module("webkivyapp." + mod_name)
         func = getattr(mod, func_name, None)
         assert func, "Module {} doesn't contain function {}".format(mod, func_name)
         return func()
@@ -136,5 +161,9 @@ def load_and_run(url):
     main_fname = loader.load(url)
     if not mod_name:
         mod_name = path_to_mod_name(main_fname)
-    return loader.run(mod_name, func_name)
+
+    try:
+        return loader.run(mod_name, func_name)
+    finally:
+        loader.close()
 

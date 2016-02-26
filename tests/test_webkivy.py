@@ -22,11 +22,11 @@ def test_load_crawl():
 
     cmdline = ["kivy", "-m", "http.server", "8866"]
 
-    web_server = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.path.join(os.getcwd(), "webkivy", "tests", "test_data"))
+    web_server = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.path.join(os.getcwd(), "tests", "test_data"))
     try:
 
         # Let the web server wake up in another process
-        time.sleep(2.0)
+        time.sleep(1.0)
 
         web_server.poll()
         if web_server.returncode is not None:
