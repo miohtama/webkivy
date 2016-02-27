@@ -2,13 +2,18 @@
 Webkivy: Remote live edit of Python applications on Android
 ===========================================================
 
+.. contents:: :local:
+
+Introduction
+============
+
 Webkivy applications allows execution of Python scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning about Python development.
 
 Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes the prototyping life cycle fast. Furthermore no any development tools need to be installed lowering the barrier of entry for mobile application development.
 
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework.
 
-.. contents:: :local:
+.. image:: screenshots/main.png
 
 Supported platforms
 ===================
@@ -27,6 +32,8 @@ Features
 * Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`: sensors, OpenGL, sound, others.
 
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
+
+.. image:: screenshots/exception.png
 
 Usage
 =====

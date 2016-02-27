@@ -25,6 +25,7 @@ class PopUpHandler(ExceptionHandler):
     def handle_exception(self, e):
         show_exception(e)
         if isinstance(e, (KeyboardInterrupt, MemoryError,)):
+            # Let the user to quit the application with CTRL+C
             return ExceptionManager.RAISE
         else:
             return ExceptionManager.PASS

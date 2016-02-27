@@ -7,9 +7,7 @@ kivy.require('1.9.1')
 import os
 import json
 import webbrowser
-import traceback
 
-from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 import kivy.utils
 from kivy.app import App
@@ -29,12 +27,12 @@ else:
 
 
 HELP = """
-Python remote script runner
+Webkivy
 ---------------------------
 
-This is a Python programming and prototyping tool.
+This is a Python programming and prototyping tool using Kivy framework.
 
-Quickly deploy your Android mobile application Python scripts over HTTP connection and any URL.
+Quickly deploy your Android mobile application written in Python programming language over HTTP connection, wi-fi or any URL.
 
 Copyright 2016 Mikko Ohtamaa. MIT licensed.
 """
