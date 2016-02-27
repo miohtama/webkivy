@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 """Simple NFC reader written in Python and Kivy.
+
 
 http://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
 
+https://android.googlesource.com/platform/packages/apps/Nfc/+/master/src/com/android/nfc/NfcService.java
 
 """
 
@@ -67,15 +70,24 @@ class NFCScreen(Screen):
             self.nfc_status.text = "NFC waiting for a touch"
 
         # https://github.com/nadam/nfc-reader/blob/master/src/se/anyro/nfc_reader/TagViewer.java#L75
-        pending_intent = PendingIntent.getActivity(activity, 0, Intent(activity, activity.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+        nfc_present_intent = Intent(activity, activity.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        # http://cheparev.com/kivy-receipt-notifications-and-service/
+        pending_intent = PendingIntent.getActivity(activity, 0, nfc_present_intent, 0)
 
         # http://developer.android.com/reference/android/nfc/NfcAdapter.html#enableForegroundDispatch%28android.app.Activity,%20android.app.PendingIntent,%20android.content.IntentFilter[],%20java.lang.String[][]%29
         self.nfc_adapter.enableForegroundDispatch(activity, pending_intent, None, None)
-        android.activity.bind(on_activity_result=self.on_activity_result)
 
-    def on_activity_result(self, request, response, intent):
-        self.nfc_status.text = "NFC foobar"
-        Logger.log(intent)
+        # https://github.com/kivy/python-for-android/blob/master/pythonforandroid/recipes/android/src/android/activity.py
+
+        # We get the following in adb logs and on_activity_result doesn't seem to work
+        # ﻿W ActivityManager: startActivity called from non-Activity context; forcing Intent.FLAG_ACTIVITY_NEW_TASK for: Intent { act=android.nfc.action.TAG_DISCOVERED flg=0x20000000 cmp=com.opensourcehacker.webkivy/org.renpy.android.PythonActivity (has extras) }
+
+        # android.activity.bind(on_activity_result=self.on_activity_result)
+        android.activity.bind(on_new_intent=self.on_new_intent)
+
+    def on_new_intent(self, intent):
+        self.nfc_status.text = "NFC boobar"
+        Logger.info(str(intent))
 
     def close_nfc(self):
         self.nfc_adapter.disableForegroundDispatch(PythonActivity.mActivity)
