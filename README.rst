@@ -26,6 +26,8 @@ Features
 
 * Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`: sensors, OpenGL, sound, others.
 
+* User friendly Python exception handler - no need to dig Android logs to see Python traceback
+
 Usage
 =====
 
@@ -103,7 +105,7 @@ In the case you need to use absolute imports modules are placed in ``webkivy.dyn
 Viewing logs
 ============
 
-Android logs to a subsystem which is often referred as "adb logs".
+Android logs to a subsystem which is often referred as "adb logs". You will need to be able to read this when a Java native crash occurs e.g. when using Android APIs through pyjnius.
 
 The easiest way to view these logs is to
 

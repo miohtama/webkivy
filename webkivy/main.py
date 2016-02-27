@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import kivy
+from webkivy.exception import show_exception, init_exception_handling
 
 kivy.require('1.9.1')
 
@@ -10,8 +11,6 @@ import traceback
 
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.textinput import TextInput
-from kivy.logger import Logger
 import kivy.utils
 from kivy.app import App
 from kivy.lang import Builder
@@ -78,15 +77,8 @@ class LandingScreen(Screen):
     pass
 
 
-
-def reset_builder():
-    """Reset Kivy language builder so we can reload .kv strings"""
-
-    Builder.files = []
-    Builder.dynamic_classes = {}
-    Builder.templates = {}
-    Builder.rules = []
-    Builder.rulectx = {}
+# Prepare kv for classes
+Builder.load_string(kv)
 
 
 class RemoteRunnerApp(App):
@@ -94,6 +86,7 @@ class RemoteRunnerApp(App):
 
     def run(self):
         self.read_settings()
+        init_exception_handling()
         super(RemoteRunnerApp, self).run()
 
     def read_settings(self):
@@ -128,13 +121,7 @@ class RemoteRunnerApp(App):
             self.root.switch_to(result)
 
         except Exception as e:
-            tb = traceback.format_exc()
-            Logger.exception(str(e))
-            Logger.exception(tb)
-            popup = Popup(title='Python exception occured',
-                content=TextInput(text=str(e) + "\n\nSee adb logs for details\n\n" + tb),
-                size_hint=(.8, .8))
-            popup.open()
+            show_exception(e)
 
     def show_help(self):
         webbrowser.open("https://github.com/miohtama/android-remote-python")
@@ -149,9 +136,6 @@ class RemoteRunnerApp(App):
             json.dump(self.settings, f)
 
     def reset_landing_screen(self):
-
-        # Prepare kv for classes
-        Builder.load_string(kv)
 
         root = LandingScreen(name="landing")
         root.ids.url.text = self.settings["url"]

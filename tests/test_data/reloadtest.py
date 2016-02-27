@@ -28,13 +28,19 @@ Builder.load_string("""
             on_press:
                 self.parent.parent.play_sound()
         Button:
+            text: 'Raise exception'
+            on_press:
+                self.parent.parent.fail()
+        Button:
             text: 'Quit'
             on_press:
                 self.parent.parent.quit()
 
 """)
 
-print "Loading b"
+
+print "(Re)Loading " + __name__
+
 
 class HelloWorldScreen(Screen):
 
@@ -45,6 +51,9 @@ class HelloWorldScreen(Screen):
         sound_path = os.path.join(my_path, 'yay.mp3')
         sound = SoundLoader.load(sound_path)
         sound.play()
+
+    def fail(self):
+        raise RuntimeError("Oho")
 
     def quit(self):
         """Switch back to the loader screen."""
