@@ -14,6 +14,7 @@ Live edit of source code is supported. You do not need to copy new application f
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework.
 
 .. image:: screenshots/main.png
+    :height: 400px
 
 Supported platforms
 ===================
@@ -34,6 +35,7 @@ Features
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 
 .. image:: screenshots/exception.png
+    :height: 400px
 
 Usage
 =====
