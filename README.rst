@@ -7,14 +7,13 @@ Webkivy: Remote live edit of Python applications on Android
 Introduction
 ============
 
-Webkivy applications allows execution of Python scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning about Python development.
+Webkivy is a tool to execution Python scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
 
 Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes the prototyping life cycle fast. Furthermore no any development tools need to be installed lowering the barrier of entry for mobile application development.
 
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework.
 
 .. image:: screenshots/main.png
-    :height: 400px
 
 Supported platforms
 ===================
@@ -26,7 +25,7 @@ Supported platforms
 Features
 ========
 
-* "Just bunch of files" (JBOF) deployment model - use any hosting service or local wi-fi to serve your application without complexity
+* "Just bunch of files" (JBOF) deployment model - use any hosting service or local wi-fi to serve your application without complexity of mobile application deployment
 
 * Live reload of code
 
@@ -35,7 +34,6 @@ Features
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 
 .. image:: screenshots/exception.png
-    :height: 400px
 
 Usage
 =====
@@ -153,7 +151,7 @@ When your application crashes you can view adb logs::
 
     ﻿/home/kivy/.buildozer/android/platform/android-sdk-20/platform-tools/adb logcat
 
-Packaging this for Android::
+Packaging for Google Play::
 
     pass
 
@@ -177,4 +175,9 @@ Example::
     /Applications/Kivy2.app/Contents/Resources/venv/bin/python setup.py develop
 
 `JNI headers installation on OSX <http://stackoverflow.com/questions/27498857/error-installing-pyjnius-jni-h-not-found-os-x-10-10-1>`_.
+
+Reading list
+============
+
+* More complex Kivy application: https://github.com/tito/2048
 

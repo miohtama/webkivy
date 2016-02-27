@@ -14,7 +14,7 @@ def show_exception(e):
     Logger.exception(str(e))
     Logger.exception(tb)
     popup = Popup(title='Python exception occured',
-        content=TextInput(text=str(e) + "\n\nSee adb logs for details\n\n" + tb),
+        content=TextInput(text=str(e) + "\n\n" + tb),
         size_hint=(.8, .8))
     popup.open()
 

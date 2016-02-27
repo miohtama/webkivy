@@ -8,11 +8,13 @@ http://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
 import os
 
 import kivy.app
+from kivy import Logger
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty
 
+import android.activity
 from jnius import autoclass
 
 NfcAdapter = autoclass("android.nfc.NfcAdapter")
@@ -55,11 +57,11 @@ class NFCScreen(Screen):
         activity = PythonActivity.mActivity
         self.nfc_adapter = NfcAdapter.getDefaultAdapter(activity)
 
-        if not adapter:
+        if not self.nfc_adapter:
             Toast.makeText(activity, "This device doesn't support NFC.", Toast.LENGTH_LONG).show()
             activity.finish()
 
-        if not adapter.isEnabled():
+        if not self.nfc_adapter.isEnabled():
             self.nfc_status.text = "NFC not enabled"
         else:
             self.nfc_status.text = "NFC waiting for a touch"
@@ -69,6 +71,11 @@ class NFCScreen(Screen):
 
         # http://developer.android.com/reference/android/nfc/NfcAdapter.html#enableForegroundDispatch%28android.app.Activity,%20android.app.PendingIntent,%20android.content.IntentFilter[],%20java.lang.String[][]%29
         self.nfc_adapter.enableForegroundDispatch(activity, pending_intent, None, None)
+        android.activity.bind(on_activity_result=self.on_activity_result)
+
+    def on_activity_result(self, request, response, intent):
+        self.nfc_status.text = "NFC foobar"
+        Logger.log(intent)
 
     def close_nfc(self):
         self.nfc_adapter.disableForegroundDispatch(PythonActivity.mActivity)

@@ -150,6 +150,12 @@ class RemoteRunnerApp(App):
         sm.add_widget(self.reset_landing_screen())
         return sm
 
+    def on_pause(self):
+        return True
+
+    def on_resume(self):
+        pass
+
 
 if __name__ == '__main__':
     RemoteRunnerApp().run()
