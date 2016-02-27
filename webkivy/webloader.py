@@ -53,13 +53,23 @@ def is_likely_app_part(link):
     ext = ext.lower()
     return ext in LOADABLE_SUFFIXES
 
+def unload_modules(namespace):
+    """Unload all Python modules under a certain namespace."""
+
+    for name, mod in sys.modules.copy().items():
+        if name.startswith(namespace):
+            del sys.modules[name]
+
 
 class UnsupportedURL(Exception):
     """We did not figure out how to run this URL."""
 
 
 class Loader(object):
-    """Helper class to load and run Python modules directly from web."""
+    """Helper class to load and run Python modules directly from web.
+
+    A faux module ``webkivyapp`` is created and all modules are put under it.
+    """
 
     def __init__(self):
 
@@ -129,10 +139,11 @@ class Loader(object):
         if not self.temp_path in sys.path:
             sys.path.insert(0, self.temp_path)
 
+        unload_modules("webkivyapp")
+
         # This might be subsequent run within the same tampered process,
         # tell interpreter we have messed up with this module
         mod = importlib.import_module("webkivyapp")
-        imp.reload(mod)
 
         # py3
         # importlib.reload(mod)

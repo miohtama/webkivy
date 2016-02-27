@@ -73,12 +73,20 @@ kv = '''
                 text: ''
 '''
 
-# Prepare kv for classes
-Builder.load_string(kv)
-
 
 class LandingScreen(Screen):
     pass
+
+
+
+def reset_builder():
+    """Reset Kivy language builder so we can reload .kv strings"""
+
+    Builder.files = []
+    Builder.dynamic_classes = {}
+    Builder.templates = {}
+    Builder.rules = []
+    Builder.rulectx = {}
 
 
 class RemoteRunnerApp(App):
@@ -108,7 +116,9 @@ class RemoteRunnerApp(App):
 
     def run_script(self):
         self.write_settings()
+
         url = self.root.get_screen("landing").ids.url.text
+
         try:
             result = load_and_run(url)
 
@@ -139,6 +149,10 @@ class RemoteRunnerApp(App):
             json.dump(self.settings, f)
 
     def reset_landing_screen(self):
+
+        # Prepare kv for classes
+        Builder.load_string(kv)
+
         root = LandingScreen(name="landing")
         root.ids.url.text = self.settings["url"]
         root.ids.help.text = HELP

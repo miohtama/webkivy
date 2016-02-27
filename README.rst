@@ -56,15 +56,15 @@ Running Python application from your local computer
 
 * Figure out the internal IP address of your computer. Use the network manager of your operating system or following Python command::
 
-    python3 -c "import socket ; print(socket.gethostbyname(socket.gethostname()))"
+     python -c "import socket ; print socket.gethostbyname(socket.gethostname())"
 
 * Go to a folder where you have ``myscripy.py`` and start a Python built-in web server::
 
-    python3 -m http.server
+    python -m SimpleHTTPServer
 
 * Enter URL to your computer. Replace ``999.999.999.999`` with your IP address
 
-    http://999.999.999.999/#myscrit.py:run
+    http://999.999.999.999:8000/#myscript.py:run
 
 * Hit *Run*
 
