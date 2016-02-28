@@ -33,8 +33,6 @@ Features
 
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 
-.. image:: screenshots/exception.png
-
 Usage
 =====
 
@@ -76,6 +74,55 @@ Running Python application from your local computer
     http://999.999.999.999:8000/#myscript.py:run
 
 * Hit *Run*
+
+Entry point
+===========
+
+The Python entry point function is given in the URL fragment. It must return `a Kivy screen object <https://kivy.org/docs/api-kivy.uix.screenmanager.html#kivy.uix.screenmanager.Screen>`_. Usually entry point is a module level function ``run()``. After entry point is called the Kivy UI switches over to screen by given the entry point.
+
+Example ``run`` entry point from ``http://localhost:8000#simplykivy:run``::
+
+    from kivy.uix.screenmanager import Screen
+
+    class HelloWorldScreen(Screen):
+
+        def quit(self):
+            # Bind this to your app UI if you want to return Webkivy main screen
+            app = kivy.app.App.get_running_app()
+            landing_screen = app.reset_landing_screen()
+            self.manager.switch_to(landing_screen)
+
+        def run():
+            return HelloWorldScreen()
+
+
+Exception handling
+==================
+
+By default all exceptions in Kivy main event loop are shown in a dialog:
+
+.. image:: screenshots/exception.png
+
+If you have code that may raise exception outside Kivy main loop you can decorate it with ``webkivy.exception.catch_gracefully` to get an error dialog. Otherwise you need to dig exception traceback from adb logs::
+
+
+    from webkivy.exceptions catch_gracefully
+
+    import android
+
+
+    class MyScreen:
+
+        def on_enter(self):
+          android.activity.bind(on_new_intent=self.on_new_intent)
+
+        @catch_gracefully()
+        def on_new_intent(self, intent):
+
+            action = intent.getAction()
+            # Exception raised where here...
+
+
 
 Developing Webkivy
 ==================
