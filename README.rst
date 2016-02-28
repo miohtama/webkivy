@@ -29,7 +29,7 @@ Features
 
 * Live reload of code
 
-* Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`: sensors, OpenGL, sound, others.
+* Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`_: sensors, OpenGL, sound, others.
 
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 

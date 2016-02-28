@@ -4,6 +4,7 @@ import kivy.app
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivy.core.audio import SoundLoader
+from webkivy.exception import catch_gracefully
 
 Builder.load_string("""
 <HelloWorldScreen>:
@@ -23,6 +24,7 @@ Builder.load_string("""
 Builder.load_string("""
 <HelloWorldScreen>:
     BoxLayout:
+        orientation: 'vertical'
         Button:
             text: 'Test'
             on_press:
@@ -31,6 +33,10 @@ Builder.load_string("""
             text: 'Raise exception'
             on_press:
                 self.parent.parent.fail()
+        Button:
+            text: 'Raise exception (decorated)'
+            on_press:
+                self.parent.parent.fail_decorated()
         Button:
             text: 'Quit'
             on_press:
@@ -54,6 +60,10 @@ class HelloWorldScreen(Screen):
 
     def fail(self):
         raise RuntimeError("Oho")
+
+    @catch_gracefully()
+    def fail_decorated(self):
+        raise RuntimeError("Hups")
 
     def quit(self):
         """Switch back to the loader screen."""

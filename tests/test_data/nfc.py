@@ -20,6 +20,8 @@ from kivy.properties import ObjectProperty
 import android.activity
 from jnius import autoclass
 
+from webkivy.exception import catch_gracefully
+
 NfcAdapter = autoclass("android.nfc.NfcAdapter")
 Toast = autoclass("android.widget.Toast")
 PythonActivity = autoclass('org.renpy.android.PythonActivity')
@@ -54,6 +56,8 @@ class NFCScreen(Screen):
         #: android.nfc.NfcAdapter
         self.nfc_adapter = None
 
+        self.found_sound = None
+
     def init_nfc(self):
 
         # http://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
@@ -85,12 +89,34 @@ class NFCScreen(Screen):
         # android.activity.bind(on_activity_result=self.on_activity_result)
         android.activity.bind(on_new_intent=self.on_new_intent)
 
+    @catch_gracefully
     def on_new_intent(self, intent):
-        self.nfc_status.text = "NFC boobar"
+
+        action = intent.getAction()
+        if action in [NfcAdapter.ACTION_TAG_DISCOVERED, NfcAdapter.ACTION_TECH_DISCOVERED, NfcAdapter.ACTION_NDEF_DISCOVERED]:
+
+            self.found_sound.play()
+
+            raw_msgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+            Logger.info("Got %d raw msgs", len(raw_msgs))
+
+            self.nfc_status.text = "NFC found"
+
         Logger.info(str(intent))
 
     def close_nfc(self):
         self.nfc_adapter.disableForegroundDispatch(PythonActivity.mActivity)
+        android.activity.unbind(on_new_intent=self.on_new_intent)
+
+    def on_pre_enter(self, *args):
+
+        # Load fx
+        my_path = os.path.dirname(__file__)
+        sound_path = os.path.join(my_path, 'yay.mp3')
+        self.found_sound = SoundLoader.load(sound_path)
+
+    def on_enter(self):
+        self.init_nfc()
 
     def on_leave(self):
         self.close_nfc()
@@ -102,6 +128,4 @@ class NFCScreen(Screen):
         self.manager.switch_to(landing_screen)
 
 def run():
-    screen = NFCScreen()
-    screen.init_nfc()
-    return screen
+    return NFCScreen()
