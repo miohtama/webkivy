@@ -32,7 +32,6 @@ def test_load_crawl():
         if web_server.returncode is not None:
             raise AssertionError("Web server process did not start up: {}".format(" ".join(cmdline)))
 
-        loader = Loader()
         result = load_and_run("http://localhost:8866#hello1:hello")
         assert result == "Hello there"
     finally:
@@ -55,9 +54,15 @@ def test_crawl_recursive():
         if web_server.returncode is not None:
             raise AssertionError("Web server process did not start up: {}".format(" ".join(cmdline)))
 
-        loader = Loader()
         result = load_and_run("http://localhost:8866#recursive_hello:hello")
         assert result == "Hello there"
+
     finally:
         if web_server.returncode is None:
             web_server.terminate()
+
+
+
+
+
+

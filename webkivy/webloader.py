@@ -91,6 +91,9 @@ class Loader(object):
         # This is where our Python package is based
         self.temp_path = tempfile.mkdtemp()
 
+        #: List of already loaded urls so we don't follow to same submodule targets twice
+        self.loaded = set()
+
         # Create a special package where downloaded files are placed. This is to make relative imports to work.
         self.path = os.path.join(self.temp_path, "webkivyapp")
         os.makedirs(self.path)
@@ -127,6 +130,12 @@ class Loader(object):
     def fetch_file(self, url, base_url, should_not_be_html=True):
         """Fetch a Python module or data file"""
 
+        # Bookkeeping across crawled threads
+        if url in self.loaded:
+            return
+
+        self.loaded.add(url)
+
         # Assume subfolder, not direct saveable file
         if url.endswith("/"):
             self.crawl(url, base_url)
@@ -135,7 +144,7 @@ class Loader(object):
         same_domain, rel_path = get_relative_url(url, base_url)
 
         # Make oo sounds
-        assert same_domain, "Whoops how we ended up at {}".format(url)
+        assert same_domain, "Whoops how we ended up at {} when base_url is {}".format(url, base_url)
         assert not rel_path.startswith(".."), "Ooops somehow ended up level below base url: {} -> {} path: {}".format(base_url, url, rel_path)
 
         target_path = os.path.join(self.path, rel_path)
@@ -164,6 +173,12 @@ class Loader(object):
 
     def load(self, url):
         """Load script from URL."""
+
+        # Check for a redirect to get a final base_url where to start
+        resp = requests.get(url)
+        if url != resp.url:
+            # Followed a redirect
+            url = resp.url
 
         fname = get_url_fname(url)
 

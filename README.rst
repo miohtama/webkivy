@@ -38,11 +38,13 @@ Usage
 
 The application asks you for an URL where to load your Python script.
 
-* The URL can be a link to single .py file
+* The URL can be a link to a single .py file
 
-* The URL can be a link to a folder (index.html file) containing references multiple .py files and other application resources like images and sounds
+* The URL can be a link to a folder (index.html file) containing references multiple .py files and other application resources like images and sounds.
 
 * The URL must contain a fragment part telling the entry point. The entry point defines which Python module and function to call after the loading is complete.
+
+* The URL may contain links to subfolders. These subfolders are also crawled and considered a Python submodule paths. Subfolders must come with their ``__init__.py`` file. Subfolder links must end with an ending slash (``/``) that is a default behavior of Python's simple HTTP server.
 
 An example URL of running a Python application off from *gist.github.com*::
 
@@ -122,6 +124,13 @@ If you have code that may raise exception outside Kivy main loop you can decorat
             action = intent.getAction()
             # Exception raised where here...
 
+
+Installing packages
+===================
+
+Webkivy doesn't know about proper Python packaging (eggs, wheels, setup.py, etc.). However you can just symlink or copy related Python modules to your application as a subfolder. Subfolders are also crawled.
+
+TODO: Currently this only works for submodules which use relative imports. Support for absolute imports is relatively easy (pun intended) to add.
 
 Namespacing
 ===========
