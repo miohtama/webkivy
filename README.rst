@@ -7,11 +7,11 @@ Webkivy: Remote live edit of Python applications on Android
 Introduction
 ============
 
-Webkivy is a tool to execution Python scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
+Webkivy is a tool to execution `Python <https://python.org>`_ scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
 
 Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes the prototyping life cycle fast. Furthermore no any development tools need to be installed lowering the barrier of entry for mobile application development.
 
-The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework.
+The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework. Using Python makes fast dynamic compiling and execution possible, something that's `difficult with statically typed Java toolchain <http://stackoverflow.com/q/17538537/315168>`_.
 
 .. image:: screenshots/main.png
 
@@ -123,27 +123,6 @@ If you have code that may raise exception outside Kivy main loop you can decorat
             # Exception raised where here...
 
 
-
-Developing Webkivy
-==================
-
-Please note that the project is not a proper distributed Python package, but a Kivy application.
-
-Setup package in development mode::
-
-    kivy -m pip install -e ".[dev, test]"
-
-Running Kivy application locally::
-
-    kivy -m webkivy.main
-
-Go to ``test_data`` folder and there start a web server ``kivy -m http.server 8866``.
-Then you can use URL `http://localhost:8866/#simplekivy:main <http://localhost:8866/#simplekivy:run>`_ for local Kivy app testing.
-
-Run tests::
-
-    kivy -m pytest
-
 Namespacing
 ===========
 
@@ -201,6 +180,32 @@ When your application crashes you can view adb logs::
 Packaging for Google Play::
 
     pass
+
+
+Developing Webkivy
+==================
+
+Please note that the project is not a proper distributed Python package, but a Kivy application.
+
+Setup package in development mode::
+
+    kivy -m pip install -e ".[dev, test]"
+
+Running Kivy application locally::
+
+    kivy -m webkivy.main
+
+Go to ``test_data`` folder and there start a web server ``kivy -m http.server 8866``.
+Then you can use URL `http://localhost:8866/#simplekivy:main <http://localhost:8866/#simplekivy:run>`_ for local Kivy app testing.
+
+Run tests::
+
+    kivy -m pytest tests
+
+Run a single test::
+
+    kivy -m pytest -k test_load_simple_module tests
+
 
 Other
 =====

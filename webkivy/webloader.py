@@ -17,6 +17,8 @@ import lxml.html
 import lxml.cssselect
 import requests
 
+from .relurl import get_relative_url
+
 
 #: Fetch all files with this extension from crawl target
 LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3", ".png", ".jpg", ".gif"]
@@ -42,16 +44,29 @@ def download_file(url, local_filename):
 
 def path_to_mod_name(mod_full_path):
     dir = os.path.dirname(mod_full_path)
-    fname = os.path.basename(dir)
+    fname = os.path.basename(mod_full_path)
     base, ext = os.path.splitext(fname)
     return base
 
 
-def is_likely_app_part(link):
+def is_likely_app_part(link, base_url):
+
+    # assume this is subfolder
+    if link.endswith("/"):
+        is_relative, rel_path = get_relative_url(link, base_url)
+
+        if not is_relative:
+            # Different domain
+            return False
+
+        if not rel_path.startswith(".."):
+            return True
+
     fname = get_url_fname(link)
     _, ext = os.path.splitext(fname)
     ext = ext.lower()
     return ext in LOADABLE_SUFFIXES
+
 
 def unload_modules(namespace):
     """Unload all Python modules under a certain namespace."""
@@ -87,7 +102,7 @@ class Loader(object):
         if self.temp_path in sys.path:
             sys.path.remove(self.temp_path)
 
-    def crawl(self, url):
+    def crawl(self, url, base_url):
         """Crawl .html page and extract all URls we think are part of application from there.
 
         Parallerize downloads using threads.
@@ -101,19 +116,43 @@ class Loader(object):
         tree = lxml.html.fromstring(resp.content)
         elems = tree.cssselect("a")
         links = [urljoin(final_base_url, elem.attrib.get("href", "")) for elem in elems]
-        links = [link for link in links if is_likely_app_part(link)]
+        links = [link for link in links if is_likely_app_part(link, base_url)]
 
         # Load all links paraller
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            future_to_url = {executor.submit(self.fetch_file, link): link for link in links}
+            future_to_url = {executor.submit(self.fetch_file, link, base_url): link for link in links}
             for future in concurrent.futures.as_completed(future_to_url):
                 future.result()  # Raise exception in main thread if bad stuff happened
 
-    def fetch_file(self, url, should_not_be_html=True):
+    def fetch_file(self, url, base_url, should_not_be_html=True):
         """Fetch a Python module or data file"""
+
+        # Assume subfolder, not direct saveable file
+        if url.endswith("/"):
+            self.crawl(url, base_url)
+            return
+
+        same_domain, rel_path = get_relative_url(url, base_url)
+
+        # Make oo sounds
+        assert same_domain, "Whoops how we ended up at {}".format(url)
+        assert not rel_path.startswith(".."), "Ooops somehow ended up level below base url: {} -> {} path: {}".format(base_url, url, rel_path)
+
+        target_path = os.path.join(self.path, rel_path)
+        target_path = os.path.dirname(target_path)
+
+        try:
+            os.makedirs(target_path)
+        except OSError:
+            # Python 2 does not have exist_ok yet :<
+            pass
+
         fname = get_url_fname(url)
-        dest = os.path.join(self.path, fname)
+        dest = os.path.join(target_path, fname)
+
         download_file(url, dest)
+
+        print("Downloading {} to {}".format(fname, dest))
 
         f = open(dest, "rt")
         payload = f.read(512).lower()
@@ -127,12 +166,14 @@ class Loader(object):
         """Load script from URL."""
 
         fname = get_url_fname(url)
+
         _, ext = os.path.splitext(fname)
+
         if ext == ".py":
-            py_file = self.fetch_file(url)
+            py_file = self.fetch_file(url, url)
             return py_file
         else:
-            self.crawl(url)
+            self.crawl(url, url)
 
     def run(self, mod_name, func_name):
 
@@ -144,7 +185,6 @@ class Loader(object):
         # This might be subsequent run within the same tampered process,
         # tell interpreter we have messed up with this module
         mod = importlib.import_module("webkivyapp")
-
         # py3
         # importlib.reload(mod)
 
