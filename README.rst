@@ -18,7 +18,7 @@ The project is based on `Kivy <https://kivy.org/#home>`_ mobile application deve
 Supported platforms
 ===================
 
-* Android (download)
+* Android (`install from Google Play store <https://play.google.com/store/apps/details?id=com.opensourcehacker.webkivy>`_)
 
 Features
 ========
@@ -27,11 +27,11 @@ Features
 
 * "Just bunch of files" (JBOF) deployment model: use wi-fi, shared hosting, Apache, Amazon S3, gist.github.com, pasteboard or anything that serves HTTP to deploy your application
 
-* Live reload of code
+* Live editing and reload of source code
 
 * Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`_: sensors, Bluetooth, NFC, OpenGL, sound, others.
 
-* User friendly Python exception handler - no need to dig Android logs to see Python traceback
+* Developer friendly Python exception handling with exception dialogs: no need to dig Android logs to see Python tracebacks
 
 * No additional tools required: write your code on a web editor or your favorite text editor
 
