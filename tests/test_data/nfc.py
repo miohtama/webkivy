@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Simple NFC reader written in Python and Kivy.
 
+Tries to see if any of credit card application ids (AIDs) are present on the card using APDU commands.
 
 http://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
 
 https://android.googlesource.com/platform/packages/apps/Nfc/+/master/src/com/android/nfc/NfcService.java
-
 """
 
 import os

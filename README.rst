@@ -9,7 +9,7 @@ Introduction
 
 Webkivy is a tool to execution `Python <https://python.org>`_ scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
 
-Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes the prototyping life cycle fast. Furthermore no any development tools need to be installed lowering the barrier of entry for mobile application development.
+Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes it possible to prototype fast. Furthermore no development tools need to be installed lowering the barrier of entry for mobile application development.
 
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework. Using Python makes fast dynamic compiling and execution possible, something that's `difficult with statically typed Java toolchain <http://stackoverflow.com/q/17538537/315168>`_.
 
@@ -20,10 +20,10 @@ Supported platforms
 
 * Android (download)
 
-* iOS (eventually)
-
 Features
 ========
+
+* Run a Python application from a given URL link
 
 * "Just bunch of files" (JBOF) deployment model: use wi-fi, shared hosting, Apache, Amazon S3, gist.github.com, pasteboard or anything that serves HTTP to deploy your application
 
@@ -33,10 +33,29 @@ Features
 
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 
+Tutorial
+========
+
+Simple hello world
+------------------
+
+* See source code hosted on `gist.github.com <https://gist.github.com/miohtama/c623ff5e469cae15bfe6>`_
+
+* Enter shortened URL to Webkivy application to run it: `http://bit.ly/webkivyhelloworld#run <http://bit.ly/webkivyhelloworld#run>`_
+
+Example with audio resource
+---------------------------
+
+This tutorial link is preloaded to the application when you run it first time.
+
+* See example index.html directory listing and Python entry point fragment `http://bit.ly/webkivytest#simplekivy:run <http://bit.ly/webkivytest#simplekivy:run>`_ (`Full link <https://cdn.rawgit.com/miohtama/webkivy/master/tests/test_data/webkivy.html#simplekivy:run>`_)
+
+* `See example source code <https://github.com/miohtama/webkivy/blob/master/tests/test_data/simplekivy.py>`_
+
 Usage
 =====
 
-The application asks you for an URL where to load your Python script.
+Webkivy asks you for an URL from where to load your Python script.
 
 * The URL can be a link to a single .py file
 
@@ -210,10 +229,10 @@ Run a single test::
 Other
 =====
 
-Install jnius on OSX
---------------------
+Install pyjnius on OSX
+----------------------
 
-You get functioning import and autocompletion in your editor.
+You get functioning import and autocompletion in your editor when you install `pyjnius <https://pyjnius.readthedocs.org/en/latest/>`_ native modules.
 
 Example::
 
