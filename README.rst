@@ -124,7 +124,7 @@ By default all exceptions in Kivy main event loop are shown in a dialog:
 
 .. image:: screenshots/exception.png
 
-If you have code that may raise exception outside Kivy main loop you can decorate it with ``webkivy.exception.catch_gracefully` to get an error dialog. Otherwise you need to dig exception traceback from adb logs::
+If you have code that may raise exception outside Kivy main loop you can decorate it with ``webkivy.exception.catch_gracefully`` to get an error dialog. Otherwise you need to dig exception traceback from adb logs::
 
 
     from webkivy.exceptions catch_gracefully
