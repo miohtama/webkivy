@@ -179,22 +179,22 @@ Default libraries include
 
 For the default available Android permissions see `buildozer.spec <https://github.com/miohtama/webkivy/blob/master/buildozer.spec#L69>`_. Please let me know if you wish any updates on these.
 
-Viewing logs
-============
+Viewing Android logs
+====================
 
-Android logs to a subsystem which is often referred as "adb logs". You will need to be able to read this when a Java native crash occurs e.g. when using Android APIs through pyjnius.
+Android logs to a subsystem which is often referred as "adb logs". You will need to be able to read these lgos when a native Java API crash occurs. This is common when using Android APIs through pyjnius. Python cannot trap these errors and cannot display inline tracebacks for them.
 
 The easiest way to view these logs is to
 
 * `Set your phone to developer mode <http://wccftech.com/enable-developer-options-in-android-6-marshmallow>`_
 
-* `Install Android SDK <http://developer.android.com/sdk/index.html>`_
+* `Install Android SDK with Android Studio IDE <http://developer.android.com/sdk/index.html>`_
 
 * Connect USB cable to your computer
 
-* Use `adb logcat command <http://developer.android.com/tools/help/logcat.html>`_
+* Use *Android monitor* in Android studio to view logs
 
-Below is also a command line recipe if you are using a `Kivy Buildozer virtual machine <https://kivy.org/docs/guide/packaging-android-vm.html>`_.
+.. image:: screenshots/logs.png
 
 Rebuilding Webkivy on Android
 =============================
