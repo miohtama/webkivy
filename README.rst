@@ -33,6 +33,8 @@ Features
 
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 
+* No additional tools required: write your code on a web editor or your favorite text editor
+
 Tutorial
 ========
 
