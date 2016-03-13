@@ -30,7 +30,7 @@ HELP = """
 Webkivy
 ---------------------------
 
-This is a Python programming and prototyping tool using Kivy framework.
+Webkivy is a Python programming and prototyping tool using Kivy framework.
 
 Quickly deploy your Android mobile application written in Python programming language over HTTP connection, wi-fi or any URL.
 

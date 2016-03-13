@@ -72,7 +72,8 @@ android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION, AC
 # android.api = 21
 
 # (int) Minimum API required
-#android.minapi = 9
+# Fix orientation crash issues https://github.com/kivy/python-for-android/issues/379
+android.minapi = 13
 
 # (int) Android SDK version to use
 #android.sdk = 20

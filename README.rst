@@ -154,6 +154,27 @@ Namespacing
 
 All loaded Python files are put to the top level namespace. Absolute and relative imports should work between them. Thus, relative imports do not work on the top level of the application. If you want to use relative imports on your top level, just nest your deployed Python files in a dummy directory with ``__init__.py``.
 
+Default libraries and permissions
+=================================
+
+The Python interpreter is Python 2.7. This will be upgraded as soon as `Buildozer toolchain <https://github.com/kivy/buildozer>`_ supports Python 3.
+
+Default libraries include
+
+* Kivy
+
+* pyOpenSSL
+
+* requests
+
+* lxml
+
+* pyjnius
+
+* futures
+
+For the default available Android permissions see `buildozer.spec <https://github.com/miohtama/webkivy/blob/master/buildozer.spec#L69>`_
+
 Viewing logs
 ============
 
