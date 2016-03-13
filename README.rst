@@ -23,17 +23,17 @@ Install
 Features
 ========
 
-* Run a Python application from a given URL link
+* Run a Python application from a given URL link. Sharing your application with your friends is as easy as linking to its source code in web.
 
-* "Just bunch of files" (JBOF) deployment model: use wi-fi, shared hosting, Apache, Amazon S3, gist.github.com, pasteboard or anything that serves HTTP to deploy your application
+* "Just bunch of files" (JBOF) deployment model: use wi-fi, shared hosting, Apache, Amazon S3, gist.github.com, pasteboard or anything that serves HTTP to deploy your application.
 
-* Live editing and reload of source code
+* Live editing and reload of source code.
 
-* Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`_: sensors, Bluetooth, NFC, OpenGL, sound, others.
+* Access to native Android Java APIs: sensors, Bluetooth, NFC, OpenGL, sound, others.
 
-* Developer friendly Python exception handling with exception dialogs: no need to dig Android logs to see Python tracebacks
+* Developer friendly Python exception handling with exception dialogs: no need to dig Android logs to see Python tracebacks.
 
-* No additional tools required: write your code on a web editor or your favorite text editor
+* No additional tools required: write your code on a web editor or your favorite text editor.
 
 Tutorial
 ========
