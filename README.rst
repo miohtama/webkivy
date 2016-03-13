@@ -15,8 +15,8 @@ The project is based on `Kivy <https://kivy.org/#home>`_ mobile application deve
 
 .. image:: screenshots/main.png
 
-Supported platforms
-===================
+Install
+=======
 
 * Android (`install from Google Play store <https://play.google.com/store/apps/details?id=com.opensourcehacker.webkivy>`_)
 
