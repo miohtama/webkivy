@@ -29,7 +29,7 @@ Features
 
 * Live reload of code
 
-* Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`_: sensors, OpenGL, sound, others.
+* Native access to Android APIs through `pyjnius <https://pyjnius.readthedocs.org/>`_: sensors, Bluetooth, NFC, OpenGL, sound, others.
 
 * User friendly Python exception handler - no need to dig Android logs to see Python traceback
 
@@ -149,6 +149,8 @@ Installing packages
 
 Webkivy doesn't know about proper Python packaging (eggs, wheels, setup.py, etc.). However you can just symlink or copy related Python modules to your application as a subfolder. Subfolders are also crawled.
 
+Alternatively you can rebuild Webkivy APK with libraries you need in ``buildozer.spec``
+
 Namespacing
 ===========
 
@@ -173,7 +175,7 @@ Default libraries include
 
 * futures
 
-For the default available Android permissions see `buildozer.spec <https://github.com/miohtama/webkivy/blob/master/buildozer.spec#L69>`_
+For the default available Android permissions see `buildozer.spec <https://github.com/miohtama/webkivy/blob/master/buildozer.spec#L69>`_. Please let me know if you wish any updates on these.
 
 Viewing logs
 ============
@@ -246,6 +248,14 @@ Run a single test::
 
     kivy -m pytest -k test_load_simple_module tests
 
+Reading list
+============
+
+* `Kivy documentation <https://kivy.org/docs/gettingstarted/intro.html>`_
+
+* `pyjnius documentation <https://pyjnius.readthedocs.org/en/latest/>`_
+
+* An example of more complex Kivy application: https://github.com/tito/2048
 
 Other
 =====
@@ -268,8 +278,7 @@ Example::
 
 `JNI headers installation on OSX <http://stackoverflow.com/questions/27498857/error-installing-pyjnius-jni-h-not-found-os-x-10-10-1>`_.
 
-Reading list
-============
+Author
+======
 
-* More complex Kivy application: https://github.com/tito/2048
-
+Mikko Ohtamaa (`blog <https://opensourcehacker.com>`_, `Facebook <https://www.facebook.com/?q=#/pages/Open-Source-Hacker/181710458567630>`_, `Twitter <https://twitter.com/moo9000>`_)
