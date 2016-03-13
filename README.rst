@@ -9,7 +9,7 @@ Introduction
 
 Webkivy is a tool for running `Python <https://python.org>`_ applications on an Android mobile over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
 
-Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes it possible to prototype fast. Furthermore no development tools need to be installed lowering the barrier of entry for mobile application development.
+Live edit of source code is supported. Changed source code files are automatically copied to a mobile from any HTTP source. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes it possible to prototype fast. Furthermore no development tools need to be installed lowering the barrier of entry for mobile application development.
 
 The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework. Using Python programming language makes dynamic compiling and execution possible, something that's `difficult with Android's default statically typed Java toolchain <http://stackoverflow.com/q/17538537/315168>`_.
 
@@ -59,17 +59,17 @@ Webkivy asks you for an URL from where to load your Python script.
 
 * The URL can be a link to a single .py file
 
-* The URL can be a link to a folder (index.html file) containing references multiple .py files and other application resources like images and sounds.
+* The URL can be a link to a folder with an index.html file. This way multiple .py files and other application resources like images and sounds can be loaded.
 
 * The URL must contain a fragment part telling the entry point. The entry point defines which Python module and function to call after the loading is complete.
 
 * The URL may contain links to subfolders. These subfolders are also crawled and considered a Python submodule paths. Subfolders must come with their ``__init__.py`` file. Subfolder links must end with an ending slash (``/``) that is a default behavior of Python's simple HTTP server.
 
-An example URL of running a Python application off from *gist.github.com*::
+An example URL of running a Python application off from *gist.github.com*. This will load ``kivyhello.py`` from gist.github.com and run function ``main()``::
 
     https://gist.githubusercontent.com/miohtama/80391980c2e73b285cfe/raw/dd89a55497ba33a6014453d9bb7432ab424c01cf/kivyhello.py#main
 
-An example URL of running a Python application from static web hosting with *index.html* support::
+An example URL of running a Python application from static web hosting with *index.html* support. This will crawl all files in the target, start ``simplekivy.py`` from ``run()`` functoin::
 
     http://bit.ly/webkivytest#simplekivy:run
 
@@ -173,6 +173,8 @@ Default libraries include
 
 * pyjnius
 
+* pygame
+
 * futures
 
 For the default available Android permissions see `buildozer.spec <https://github.com/miohtama/webkivy/blob/master/buildozer.spec#L69>`_. Please let me know if you wish any updates on these.
@@ -194,10 +196,10 @@ The easiest way to view these logs is to
 
 Below is also a command line recipe if you are using a `Kivy Buildozer virtual machine <https://kivy.org/docs/guide/packaging-android-vm.html>`_.
 
-Deploying on Android
-====================
+Rebuilding Webkivy on Android
+=============================
 
-To build APK you need to use Buildozer virtual machine image (Linux).
+To build Webkivy APK you need to use Buildozer virtual machine image (Linux).
 
 `Make sure your phone is in developer mode <http://wccftech.com/enable-developer-options-in-android-6-marshmallow/>`_. Connect your phone. Expose your phone to the VM by clicking the USB icon in the lower right corner of Virtualbox. `Make sure you have high quality USB cable <http://stackoverflow.com/questions/21296305/adb-commandline-hanging-during-install-phonegap>`_.
 
@@ -219,10 +221,26 @@ When your application crashes you can view adb logs::
 
     ﻿/home/kivy/.buildozer/android/platform/android-sdk-20/platform-tools/adb logcat
 
-Packaging for Google Play::
+So start a Google Play release on Buildozer::
 
-    pass
+    # Make unsigned release
+    buildozer android release
 
+    # Copy APK over to host OS osing Virtualbox shared folder
+    ﻿cp bin/Webkivy-0.1-release-unsigned.apk /mnt/code
+
+Then on the host::
+
+    # Create release key
+    keytool -genkey -v -keystore ./Dropbox/android-keys/androidkey.keystore -alias androidkey -keyalg RSA -keysize 2048 -validity 10000
+
+    # Sign release
+    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/Dropbox/androidkeys/androidkey.keystore ~/code/Webkivy-0.1-release-unsigned.apk androidkey
+
+    # ZIP alignemnt
+    ~/Library/Android/sdk/build-tools/23.0.2/zipalign -v 4 ~/code/Webkivy-0.1-release-unsigned.apk ~/code/Webkivy.apk
+
+Upload to Google Play developer console.
 
 Developing Webkivy
 ==================
@@ -277,6 +295,19 @@ Example::
     /Applications/Kivy2.app/Contents/Resources/venv/bin/python setup.py develop
 
 `JNI headers installation on OSX <http://stackoverflow.com/questions/27498857/error-installing-pyjnius-jni-h-not-found-os-x-10-10-1>`_.
+
+Contribute
+==========
+
+To discuss contact via IRC channel:
+
+* Server: irc.freenode.net
+
+* Port: 6667, 6697 (SSL only)
+
+* Channel: #kivy
+
+For bugs and issues open an issue at Github.
 
 Author
 ======
