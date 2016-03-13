@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Load remote Python classes from an URL and run them for Kivy on Android."""
+"""Load remote Python classes from an URL and run them for Kivy on Android.
+
+.. note ::
+
+    We do not claim to offer perfect functionality, just enough to get your few .py files and images into your phone.
+
+"""
 
 from __future__ import print_function
 
@@ -22,6 +28,25 @@ from .relurl import get_relative_url
 
 #: Fetch all files with this extension from crawl target
 LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3", ".png", ".jpg", ".gif"]
+
+
+#: sys.path reset state
+original_sys_path = None
+
+#: sys.module reset state
+original_modules = None
+
+
+def record_original_modules():
+    """This allows us to reload/reset."""
+    global original_sys_path
+    global original_modules
+
+    if not original_modules:
+        original_modules = sys.modules
+
+    if not original_sys_path:
+        original_sys_path = sys.path
 
 
 def get_url_fname(url):
@@ -68,14 +93,6 @@ def is_likely_app_part(link, base_url):
     return ext in LOADABLE_SUFFIXES
 
 
-def unload_modules(namespace):
-    """Unload all Python modules under a certain namespace."""
-
-    for name, mod in sys.modules.copy().items():
-        if name.startswith(namespace):
-            del sys.modules[name]
-
-
 class UnsupportedURL(Exception):
     """We did not figure out how to run this URL."""
 
@@ -83,7 +100,13 @@ class UnsupportedURL(Exception):
 class Loader(object):
     """Helper class to load and run Python modules directly from web.
 
-    A faux module ``webkivyapp`` is created and all modules are put under it.
+    * Creates a root folder with with __init__.py where Python modules are placed
+
+    * Crawls HTML for .py and resource links
+
+    * Crawls HTML for subfolders
+
+    * Parallel download of files
     """
 
     def __init__(self):
@@ -95,7 +118,7 @@ class Loader(object):
         self.loaded = set()
 
         # Create a special package where downloaded files are placed. This is to make relative imports to work.
-        self.path = os.path.join(self.temp_path, "webkivyapp")
+        self.path = os.path.join(self.temp_path, "python_root")
         os.makedirs(self.path)
         open(os.path.join(self.path, "__init__.py"), 'a').close()
 
@@ -191,20 +214,21 @@ class Loader(object):
             self.crawl(url, url)
 
     def run(self, mod_name, func_name):
+        global original_sys_path
+        global original_modules
 
-        if not self.temp_path in sys.path:
-            sys.path.insert(0, self.temp_path)
+        record_original_modules()
 
-        unload_modules("webkivyapp")
+        # Kind of brute force approach to get rid of old modules, seems to work
+        sys.path = original_sys_path
+        sys.path.insert(0, os.path.join(self.temp_path, "python_root"))
 
-        # This might be subsequent run within the same tampered process,
-        # tell interpreter we have messed up with this module
-        mod = importlib.import_module("webkivyapp")
-        # py3
-        # importlib.reload(mod)
+        for mod in sys.modules:
+            if mod not in original_modules:
+                del sys.modules[mod]
 
         # Use a special package name where downloaded modules are placed
-        mod = importlib.import_module("webkivyapp." + mod_name)
+        mod = importlib.import_module(mod_name)
         func = getattr(mod, func_name, None)
         assert func, "Module {} doesn't contain function {}".format(mod, func_name)
         return func()
@@ -248,4 +272,5 @@ def load_and_run(url):
     finally:
         # Don't leave tmp directory right away as it may contain resource files (graphics, audio) still needed to load
         atexit.register(loader.close)
+
 

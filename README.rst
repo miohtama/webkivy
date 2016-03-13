@@ -25,7 +25,7 @@ Supported platforms
 Features
 ========
 
-* "Just bunch of files" (JBOF) deployment model - use any hosting service or local wi-fi to serve your application without complexity of mobile application deployment
+* "Just bunch of files" (JBOF) deployment model: use wi-fi, shared hosting, Apache, Amazon S3, gist.github.com, pasteboard or anything that serves HTTP to deploy your application
 
 * Live reload of code
 
@@ -130,19 +130,10 @@ Installing packages
 
 Webkivy doesn't know about proper Python packaging (eggs, wheels, setup.py, etc.). However you can just symlink or copy related Python modules to your application as a subfolder. Subfolders are also crawled.
 
-TODO: Currently this only works for submodules which use relative imports. Support for absolute imports is relatively easy (pun intended) to add.
-
 Namespacing
 ===========
 
-Your application may contain several modules. You should be able to import them using Python relative import::
-
-    import .anothermodule
-
-    from .anothermodule import foobar
-
-
-In the case you need to use absolute imports modules are placed in ``webkivy.dynamic`` namespace.
+All loaded Python files are put to the top level namespace. Absolute and relative imports should work between them. Thus, relative imports do not work on the top level of the application. If you want to use relative imports on your top level, just nest your deployed Python files in a dummy directory with ``__init__.py``.
 
 Viewing logs
 ============

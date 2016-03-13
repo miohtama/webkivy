@@ -9,7 +9,7 @@ from kivy.base import ExceptionHandler
 from kivy.base import ExceptionManager
 
 
-IGNORE_EXCEPTIONS = (KeyboardInterrupt, MemoryError,)
+IGNORE_EXCEPTIONS = (KeyboardInterrupt, MemoryError, )
 
 
 def show_exception(e):
