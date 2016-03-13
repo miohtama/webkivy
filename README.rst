@@ -237,7 +237,7 @@ Then on the host::
     # Sign release
     jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/Dropbox/androidkeys/androidkey.keystore ~/code/Webkivy-0.1-release-unsigned.apk androidkey
 
-    # ZIP alignemnt
+    # ZIP alignment
     ~/Library/Android/sdk/build-tools/23.0.2/zipalign -v 4 ~/code/Webkivy-0.1-release-unsigned.apk ~/code/Webkivy.apk
 
 Upload to Google Play developer console.
