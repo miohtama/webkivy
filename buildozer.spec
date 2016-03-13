@@ -43,7 +43,7 @@ requirements = kivy, lxml, requests, cssselect, pyjnius, futures, six, docutils,
 #garden_requirements =
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+presplash.filename = presplash.png
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/icon.png

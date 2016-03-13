@@ -7,11 +7,11 @@ Webkivy: Remote live edit of Python applications on Android
 Introduction
 ============
 
-Webkivy is a tool to execution `Python <https://python.org>`_ scripts on a mobile device over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
+Webkivy is a tool for running `Python <https://python.org>`_ applications on an Android mobile over web. It is intended for quick prototyping, sharing your Python scripts with friends and learning Python development.
 
 Live edit of source code is supported. You do not need to copy new application files to your phone by hand - it's enough to hit *Run* button again and again. This web like development model makes it possible to prototype fast. Furthermore no development tools need to be installed lowering the barrier of entry for mobile application development.
 
-The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework. Using Python makes fast dynamic compiling and execution possible, something that's `difficult with statically typed Java toolchain <http://stackoverflow.com/q/17538537/315168>`_.
+The project is based on `Kivy <https://kivy.org/#home>`_ mobile application development framework. Using Python programming language makes dynamic compiling and execution possible, something that's `difficult with Android's default statically typed Java toolchain <http://stackoverflow.com/q/17538537/315168>`_.
 
 .. image:: screenshots/main.png
 
