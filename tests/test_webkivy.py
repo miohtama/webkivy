@@ -66,3 +66,8 @@ def test_pastebin_content_disposition():
     """See that we can execute stuff out from a pastebin raw link."""
     result = load_and_run("http://ideone.com/plain/BhUclX#run")
     assert result == "Hello world"
+
+
+def test_codecademy():
+    result = load_and_run("http://labs.codecademy.com/download/editor/DQOF/0/#run")
+    assert result == "codecademy"

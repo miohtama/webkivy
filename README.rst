@@ -77,8 +77,22 @@ An example URL of running a Python application from static web hosting with *ind
 
 The entry point function return `a Kivy screen object <https://kivy.org/docs/api-kivy.uix.screenmanager.html#kivy.uix.screenmanager.Screen>`_. Usually entry point is a module level function ``run()``. After entry point is called the Android application switches over to screen by given the entry point.
 
-Running Python application from your local computer
----------------------------------------------------
+Delivering Python code to a phone
+=================================
+
+Compatible pastebins
+--------------------
+
+Write Python code online and execute in a phone through Webkivy.
+
+* `ideone.com <http://ideone.com/ST7M6k>`_ (`example <http://ideone.com/ST7M6k>`_, `.py run link <http://ideone.com/plain/ST7M6k#run>`_)
+
+* `labs.codecademy.com <http://labs.codecademy.com>`_ (`example <http://labs.codecademy.com/DQNv/1#:workspace>`_, `py run link <http://labs.codecademy.com/download/editor/DQNv/1#run>`_) - run link changes on each save, don't add ending lash in run link
+
+* `gist.github.com <https://gist.github.com>`_ - it will give very long links, impossible to hand type and thus you need URL shortener too
+
+Running Python code from your local computer over wi-fi
+-------------------------------------------------------
 
 * Assume you have created a Python file ``myscript.py`` based on the `example <https://github.com/miohtama/android-remote-python/blob/master/tests/test_data/simplekivy.py>`_.
 
