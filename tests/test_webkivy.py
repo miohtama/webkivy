@@ -62,7 +62,7 @@ def test_crawl_recursive():
             web_server.terminate()
 
 
-
-
-
-
+def test_pastebin_content_disposition():
+    """See that we can execute stuff out from a pastebin raw link."""
+    result = load_and_run("http://ideone.com/plain/BhUclX#run")
+    assert result == "Hello world"

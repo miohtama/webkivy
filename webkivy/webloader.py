@@ -10,7 +10,7 @@
 from __future__ import print_function
 
 import concurrent.futures
-import imp
+import cgi
 import importlib
 import os
 import tempfile
@@ -56,15 +56,34 @@ def get_url_fname(url):
     return fname
 
 
+def get_response_fname(resp):
+    # See if we can get filename from content disposition header
+    # (usually indicates raw download on pastebins)
+    fname = None
+    cd = resp.headers.get("content-disposition")
+    if cd:
+        value, params = cgi.parse_header(cd)
+        fname = params.get("filename")
+
+    # Next best guess
+    if not fname:
+        fname = get_url_fname(resp.url)
+
+    return fname
+
 # http://stackoverflow.com/a/16696317/315168
-def download_file(url, local_filename):
+def download_file(url, target_path):
     r = requests.get(url, stream=True, timeout=60.0)
-    with open(local_filename, 'wb') as f:
+
+    fname = get_response_fname(r)
+
+    target_file = os.path.join(target_path, fname)
+    with open(target_file, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
             if chunk: # filter out keep-alive new chunks
                 f.write(chunk)
 
-    return local_filename
+    return target_file
 
 
 def path_to_mod_name(mod_full_path):
@@ -99,6 +118,8 @@ class UnsupportedURL(Exception):
 
 class Loader(object):
     """Helper class to load and run Python modules directly from web.
+
+    * Discriminates Python modules and index listings based on file extension and content-disposition
 
     * Creates a root folder with with __init__.py where Python modules are placed
 
@@ -179,32 +200,28 @@ class Loader(object):
             # Python 2 does not have exist_ok yet :<
             pass
 
-        fname = get_url_fname(url)
-        dest = os.path.join(target_path, fname)
+        target_file = download_file(url, target_path)
 
-        download_file(url, dest)
+        print("Downloaded {} to {}".format(url, target_file))
 
-        print("Downloading {} to {}".format(fname, dest))
-
-        f = open(dest, "rt")
+        f = open(target_file, "rt")
         payload = f.read(512).lower()
         if "<!doctype html" in payload or "<html" in payload:
             # Likely an error page
-            raise UnsupportedURL("Got a likely error page for URL {}: {}".format(url, payload))
+            raise UnsupportedURL("Got a likely an error page for URL instead of a Python module {}: {}".format(url, payload))
 
-        return dest
+        return target_file
 
     def load(self, url):
         """Load script from URL."""
 
         # Check for a redirect to get a final base_url where to start
-        resp = requests.get(url)
+        resp = requests.head(url)
         if url != resp.url:
             # Followed a redirect
             url = resp.url
 
-        fname = get_url_fname(url)
-
+        fname = get_response_fname(resp)
         _, ext = os.path.splitext(fname)
 
         if ext == ".py":
