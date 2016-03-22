@@ -251,7 +251,7 @@ Then on the host::
     keytool -genkey -v -keystore ./Dropbox/android-keys/androidkey.keystore -alias androidkey -keyalg RSA -keysize 2048 -validity 10000
 
     # Sign release
-    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/Dropbox/androidkeys/androidkey.keystore ~/code/Webkivy-0.1-release-unsigned.apk androidkey
+    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/Dropbox/android-keys/androidkey.keystore ~/code/Webkivy-0.1-release-unsigned.apk androidkey
 
     # ZIP alignment
     ~/Library/Android/sdk/build-tools/23.0.2/zipalign -v 4 ~/code/Webkivy-0.1-release-unsigned.apk ~/code/Webkivy.apk
