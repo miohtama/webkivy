@@ -294,6 +294,41 @@ Reading list
 Other
 =====
 
+Building reverse public tunnels with ngrok
+------------------------------------------
+
+If
+
+* Your local computer doesn't have publicly exposed IP address
+
+* Your WLAN devices cannot to connect each other due to enterprise wireless firewalling
+
+You can use `ngrok <https://ngrok.com/>`_ to build a publicly exposed HTTP tunnel from Internet to your computer. Example how to expose Python http server running in port 8000::
+
+    ngrok http 8000 -subdomain=myhorseapp
+
+And then you can access your site at *myhorseapp.ngrok.io*.
+
+Amazon S3 hosting
+-----------------
+
+For S3 deployment one needs to generate *index.html* directory listing files as Amazon doesn't do it for you.
+
+Webkivy supplies a simple Bash script which can do index generation for you. Here is an example how to get directories prepared to for S3 upload and then upload them using Amazon aws tool.
+
+Drop ``generate-index.bash``somewhere. First generate ``index.html`` files::
+
+    # Run downloaded bash script
+    ~/code/generate-index.bash
+
+    Generated /Users/mikko/code/example.com/android/index.html
+    Generated /Users/mikko/code/example.com/android/desfire/index.html
+
+Then sync them to Amazon S3::
+
+    aws s3 sync . s3://example.com
+
+
 Install pyjnius on OSX
 ----------------------
 
