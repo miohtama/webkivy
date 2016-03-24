@@ -7,13 +7,15 @@ kivy.require('1.9.1')
 import os
 import json
 import webbrowser
+import logging
 
 from kivy.uix.screenmanager import ScreenManager, Screen
 import kivy.utils
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.logger import Logger
 
-from webkivy.webloader import load_and_run
+from webkivy.webloader import Loader
 
 
 SETTINGS_FILE = "webkivy-settings.json"
@@ -23,7 +25,9 @@ if kivy.utils.platform == "android":
     from jnius import autoclass
     SETTINGS_FOLDER = autoclass('org.renpy.android.PythonActivity').mActivity.getFilesDir().getAbsolutePath()
 else:
+    # Test run on OSX/Linux
     SETTINGS_FOLDER = "."
+    Logger.setLevel(logging.DEBUG)
 
 
 HELP = """
@@ -85,6 +89,7 @@ class RemoteRunnerApp(App):
     def run(self):
         self.read_settings()
         init_exception_handling()
+        self.loader = Loader(Logger)
         super(RemoteRunnerApp, self).run()
 
     def read_settings(self):
@@ -111,7 +116,13 @@ class RemoteRunnerApp(App):
         url = self.root.get_screen("landing").ids.url.text
 
         try:
-            result = load_and_run(url)
+
+            if not self.loader.has_original_state():
+                self.loader.record_original_state()
+
+            self.loader.reset()
+
+            result = self.loader.load_and_run(url)
 
             if not isinstance(result, Screen):
                 raise RuntimeError("Entry point did not return kivy.uix.screenmanager.Screen")

@@ -3,13 +3,21 @@ import os
 import time
 
 from webkivy.webloader import Loader
-from webkivy.webloader import load_and_run
 from webkivy.webloader import path_to_mod_name
+
+
+def load_and_run(url):
+    loader = Loader()
+    loader.record_original_state()
+    loader.reset()
+    return loader.load_and_run(url)
 
 
 def test_load_simple_module():
     """Simple module test - run function from web and see it matches expected value."""
     loader = Loader()
+    loader.record_original_state()
+    loader.reset()
     main_fname = loader.load("https://gist.githubusercontent.com/miohtama/80391980c2e73b285cfe/raw/dd89a55497ba33a6014453d9bb7432ab424c01cf/kivyhello.py#main")
     mod = path_to_mod_name(main_fname)
     result = loader.run(mod, "hello")

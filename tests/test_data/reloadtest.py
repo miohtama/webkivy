@@ -28,7 +28,7 @@ Builder.load_string("""
     BoxLayout:
         orientation: 'vertical'
         Button:
-            text: 'Test'
+            text: 'Test 4'
             on_press:
                 self.parent.parent.play_sound()
         Button:

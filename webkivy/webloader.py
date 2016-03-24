@@ -9,6 +9,7 @@
 
 from __future__ import print_function
 
+import logging
 import concurrent.futures
 import cgi
 import importlib
@@ -25,28 +26,11 @@ import requests
 
 from .relurl import get_relative_url
 
-
 #: Fetch all files with this extension from crawl target
 LOADABLE_SUFFIXES = [".py", ".kv", ".wav", ".mp3", ".png", ".jpg", ".gif"]
 
-
-#: sys.path reset state
-original_sys_path = None
-
-#: sys.module reset state
-original_modules = None
-
-
-def record_original_modules():
-    """This allows us to reload/reset."""
-    global original_sys_path
-    global original_modules
-
-    if not original_modules:
-        original_modules = sys.modules
-
-    if not original_sys_path:
-        original_sys_path = sys.path
+#: Module logger
+logger = logging.getLogger(__name__)
 
 
 def get_url_fname(url):
@@ -130,18 +114,50 @@ class Loader(object):
     * Parallel download of files
     """
 
-    def __init__(self):
+    def __init__(self, logger=logger):
+
+        # Allow user to pass a logger we use
+        self.logger = logger
+
+        # Keep state for unload
+        self.original_modules = None
+        self.original_sys_path = None
+
+    def record_original_state(self):
+        """Record sys.modules state to allow us to reload/reset."""
+
+        self.original_modules = set(sys.modules.keys())
+        self.original_sys_path = sys.path
+
+    def has_original_state(self):
+        """Have we recorded sys.path before running the script."""
+        return self.original_sys_path is not None
+
+    def reset(self):
+        #: List of already loaded urls so we don't follow to same submodule targets twice
+        self.logger.debug("Resetting Python module loader state and unloading modules.")
+
+        self.loaded = set()
 
         # This is where our Python package is based
         self.temp_path = tempfile.mkdtemp()
 
-        #: List of already loaded urls so we don't follow to same submodule targets twice
-        self.loaded = set()
-
-        # Create a special package where downloaded files are placed. This is to make relative imports to work.
+        # Create a dummy __init__.py file (may be later replaced with downloaded one)
         self.path = os.path.join(self.temp_path, "python_root")
         os.makedirs(self.path)
         open(os.path.join(self.path, "__init__.py"), 'a').close()
+
+        # Kind of brute force approach to get rid of old modules, seems to work
+        sys.path = self.original_sys_path
+
+        current_mods = sys.modules.keys()
+
+        for mod in current_mods:
+            # Slows down
+            # self.logger.debug("Checking need to unload module %s", mod)
+            if mod not in self.original_modules:
+                self.logger.debug("Unloading %s", mod)
+                del sys.modules[mod]
 
     def close(self):
         shutil.rmtree(self.temp_path)
@@ -202,7 +218,7 @@ class Loader(object):
 
         target_file = download_file(url, target_path)
 
-        print("Downloaded {} to {}".format(url, target_file))
+        self.logger.debug("Downloaded {} to {}".format(url, target_file))
 
         f = open(target_file, "rt")
         payload = f.read(512).lower()
@@ -232,63 +248,51 @@ class Loader(object):
             self.crawl(url, url)
 
     def run(self, mod_name, func_name):
-        global original_sys_path
-        global original_modules
-
-        record_original_modules()
-
-        # Kind of brute force approach to get rid of old modules, seems to work
-        sys.path = original_sys_path
         sys.path.insert(0, os.path.join(self.temp_path, "python_root"))
 
-        for mod in sys.modules:
-            if mod not in original_modules:
-                del sys.modules[mod]
-
         # Use a special package name where downloaded modules are placed
+        self.logger.debug("Importing application main module %s", mod_name)
         mod = importlib.import_module(mod_name)
         func = getattr(mod, func_name, None)
         assert func, "Module {} doesn't contain function {}".format(mod, func_name)
         return func()
 
+    def load_and_run(self, url):
+        """Load URL.
 
-def load_and_run(url):
-    """Load URL.
+        URL can be a Python file (detected if it ends .py) or any HTML file. Example::
 
-    URL can be a Python file (detected if it ends .py) or any HTML file. Example::
+        In the case of HTML file it is crawled from all files ending .py, those are downloaded and one separated by a URL fragment is run. Example::
 
-    In the case of HTML file it is crawled from all files ending .py, those are downloaded and one separated by a URL fragment is run. Example::
+            http://192.168.0.1/myfolder#main.py
 
-        http://192.168.0.1/myfolder#main.py
+        The main module must contain kivy() function which returns a Kivy layout object. After loading this layout will take over the current layout.
 
-    The main module must contain kivy() function which returns a Kivy layout object. After loading this layout will take over the current layout.
+        .. note ::
 
-    .. note ::
+            This function will leave temporary files around
+        """
 
-        This function will leave temporary files around
-    """
+        parts = urlparse(url, allow_fragments=True)
+        fragment = parts.fragment
 
-    parts = urlparse(url, allow_fragments=True)
-    fragment = parts.fragment
+        if not fragment:
+            raise UnsupportedURL("URL must contain fragment telling entry point function: {}".format(url))
 
-    if not fragment:
-        raise UnsupportedURL("URL must contain fragment telling entry point function: {}".format(url))
+        if ":" in fragment:
+            mod_name, func_name = fragment.split(":")
+        else:
+            mod_name = None
+            func_name = fragment
 
-    if ":" in fragment:
-        mod_name, func_name = fragment.split(":")
-    else:
-        mod_name = None
-        func_name = fragment
+        main_fname = self.load(url)
+        if not mod_name:
+            mod_name = path_to_mod_name(main_fname)
 
-    loader = Loader()
-    main_fname = loader.load(url)
-    if not mod_name:
-        mod_name = path_to_mod_name(main_fname)
-
-    try:
-        return loader.run(mod_name, func_name)
-    finally:
-        # Don't leave tmp directory right away as it may contain resource files (graphics, audio) still needed to load
-        atexit.register(loader.close)
+        try:
+            return self.run(mod_name, func_name)
+        finally:
+            # Don't leave tmp directory right away as it may contain resource files (graphics, audio) still needed to load
+            atexit.register(self.close)
 
 
