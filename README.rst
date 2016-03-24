@@ -258,29 +258,6 @@ Then on the host::
 
 Upload to Google Play developer console.
 
-Developing Webkivy
-==================
-
-Please note that the project is not a proper distributed Python package, but a Kivy application.
-
-Setup package in development mode::
-
-    kivy -m pip install -e ".[dev, test]"
-
-Running Kivy application locally::
-
-    kivy -m webkivy.main
-
-Go to ``test_data`` folder and there start a web server ``kivy -m http.server 8866``.
-Then you can use URL `http://localhost:8866/#simplekivy:main <http://localhost:8866/#simplekivy:run>`_ for local Kivy app testing.
-
-Run tests::
-
-    kivy -m pytest tests
-
-Run a single test::
-
-    kivy -m pytest -k test_load_simple_module tests
 
 Reading list
 ============
@@ -346,6 +323,30 @@ Example::
     /Applications/Kivy2.app/Contents/Resources/venv/bin/python setup.py develop
 
 `JNI headers installation on OSX <http://stackoverflow.com/questions/27498857/error-installing-pyjnius-jni-h-not-found-os-x-10-10-1>`_.
+
+Developing Webkivy
+==================
+
+Please note that the project is not a proper Python package, but a Kivy application.
+
+Setup package in development mode::
+
+    kivy -m pip install -e ".[dev, test]"
+
+Running Kivy application locally::
+
+    kivy -m webkivy.main
+
+Go to ``test_data`` folder and there start a web server ``kivy -m http.server 8866``.
+Then you can use URL `http://localhost:8866/#simplekivy:main <http://localhost:8866/#simplekivy:run>`_ for local Kivy app testing.
+
+Run tests::
+
+    kivy -m pytest tests
+
+Run a single test::
+
+    kivy -m pytest -k test_load_simple_module tests
 
 Contribute
 ==========

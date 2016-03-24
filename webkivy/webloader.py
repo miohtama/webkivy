@@ -216,7 +216,8 @@ class Loader(object):
         """Load script from URL."""
 
         # Check for a redirect to get a final base_url where to start
-        resp = requests.head(url)
+
+        resp = requests.head(url, allow_redirects=True)
         if url != resp.url:
             # Followed a redirect
             url = resp.url
