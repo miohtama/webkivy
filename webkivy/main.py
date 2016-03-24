@@ -129,6 +129,8 @@ class RemoteRunnerApp(App):
 
             self.root.switch_to(result)
 
+            # TODO: Loader keeps leaving tmp folders around, make sure they are cleaned up
+
         except Exception as e:
             show_exception(e)
 
